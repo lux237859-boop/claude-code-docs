@@ -4,6 +4,10 @@
 
 $ErrorActionPreference = "Stop"
 
+# Fix UTF-8 encoding for emoji display on Windows
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
 # Script version
 $SCRIPT_VERSION = "0.3.3"
 
@@ -67,7 +71,10 @@ function Auto-Update {
             $versionInt = [int]($SCRIPT_VERSION -replace '^0\.', '' -split '\.')[0]
             if ($versionInt -ge 3) {
                 Write-Output "🔧 Updating Claude Code Docs installer..." | Out-Host -ErrorAction SilentlyContinue
-                & "$DOCS_PATH\install.ps1" 2>$null
+                $installerPath = Join-Path $DOCS_PATH "install.ps1"
+                if (Test-Path $installerPath) {
+                    & $installerPath 2>$null
+                }
             }
         }
 
@@ -184,7 +191,10 @@ function Read-Doc {
 
                 $versionInt = [int]($SCRIPT_VERSION -replace '^0\.', '' -split '\.')[0]
                 if ($versionInt -ge 3) {
-                    & "$DOCS_PATH\install.ps1" 2>$null
+                    $installerPath = Join-Path $DOCS_PATH "install.ps1"
+                    if (Test-Path $installerPath) {
+                        & $installerPath 2>$null
+                    }
                 }
                 Write-Output "✅ Updated to latest (v$version, $branch)"
             } else {
@@ -223,20 +233,20 @@ function Read-Doc {
             $docsDir = Join-Path $DOCS_PATH "docs"
             $allDocs = Get-ChildItem -Path $docsDir -Filter "*.md" | ForEach-Object { $_.BaseName }
 
-            $matches = @()
+            $results = @()
             foreach ($doc in $allDocs) {
                 foreach ($kw in $keywords) {
                     if ($doc -match [regex]::Escape($kw)) {
-                        $matches += $doc
+                        $results += $doc
                         break
                     }
                 }
             }
-            $matches = $matches | Sort-Object -Unique
+            $results = $results | Sort-Object -Unique
 
-            if ($matches.Count -gt 0) {
+            if ($results.Count -gt 0) {
                 Write-Output "Found these related topics:"
-                foreach ($m in $matches) {
+                foreach ($m in $results) {
                     Write-Output "  • $m"
                 }
                 Write-Output ""
