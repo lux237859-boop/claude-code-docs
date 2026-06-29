@@ -4,6 +4,8 @@
 
 ### For v0.3+ (installed at ~/.claude-code-docs)
 
+**macOS/Linux:**
+
 From anywhere, run:
 ```bash
 ~/.claude-code-docs/uninstall.sh
@@ -11,6 +13,17 @@ From anywhere, run:
 
 Or use the docs command:
 ```bash
+/docs uninstall
+```
+
+**Windows (PowerShell):**
+
+```powershell
+& "$env:USERPROFILE\.claude-code-docs\uninstall.ps1"
+```
+
+Or use the docs command:
+```powershell
 /docs uninstall
 ```
 
@@ -36,14 +49,24 @@ The uninstaller will remove:
 If you prefer to uninstall manually:
 
 ### 1. Remove the command file:
+
+**macOS/Linux:**
 ```bash
 rm -f ~/.claude/commands/docs.md
 ```
 
+**Windows (PowerShell):**
+```powershell
+Remove-Item "$env:USERPROFILE\.claude\commands\docs.md" -Force
+```
+
 ### 2. Remove the hook from Claude settings:
-Use /hooks in Claude Code CLI or Edit `~/.claude/settings.json` direction to remove the PreToolUse hook that references claude-code-docs.
+
+Use /hooks in Claude Code CLI or Edit `~/.claude/settings.json` (or `%USERPROFILE%\.claude\settings.json` on Windows) directly to remove the PreToolUse hook that references claude-code-docs.
 
 ### 3. Remove the installation directory:
+
+**macOS/Linux:**
 
 For v0.3+:
 ```bash
@@ -53,6 +76,12 @@ rm -rf ~/.claude-code-docs
 For older versions:
 ```bash
 rm -rf /path/to/your/claude-code-docs
+```
+
+**Windows (PowerShell):**
+
+```powershell
+Remove-Item "$env:USERPROFILE\.claude-code-docs" -Recurse -Force
 ```
 
 ## Multiple Installations
@@ -77,6 +106,13 @@ After uninstalling, there should be no traces left except:
 ## Reinstalling
 
 To reinstall after uninstalling:
+
+**macOS/Linux:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1 | iex
 ```

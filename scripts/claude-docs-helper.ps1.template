@@ -1,0 +1,420 @@
+# Claude Code Documentation Helper Script v0.3.3 (PowerShell)
+# This script handles all /docs command functionality
+# Installation path: ~\.claude-code-docs\claude-docs-helper.ps1
+
+$ErrorActionPreference = "Stop"
+
+# Script version
+$SCRIPT_VERSION = "0.3.3"
+
+# Fixed installation path
+$DOCS_PATH = Join-Path $env:USERPROFILE ".claude-code-docs"
+$MANIFEST = Join-Path $DOCS_PATH "docs\docs_manifest.json"
+
+# Enhanced sanitize function to prevent command injection
+function Sanitize-Input {
+    param([string]$Input_)
+    # Only allow alphanumeric, spaces, hyphens, underscores, periods, commas, apostrophes, and question marks
+    $clean = $Input_ -replace '[^a-zA-Z0-9 _.,''?\-]', ''
+    $clean = $clean -replace '\s+', ' '
+    return $clean.Trim()
+}
+
+# Function to print documentation header
+function Print-DocHeader {
+    Write-Output "📚 COMMUNITY MIRROR: https://github.com/ericbuess/claude-code-docs"
+    Write-Output "📖 OFFICIAL DOCS: https://docs.anthropic.com/en/docs/claude-code"
+    Write-Output ""
+}
+
+# Function to auto-update docs if needed
+function Auto-Update {
+    try {
+        Push-Location $DOCS_PATH
+    } catch {
+        return 1
+    }
+
+    try {
+        # Get current branch
+        $branch = & git rev-parse --abbrev-ref HEAD 2>$null
+        if (-not $branch) { $branch = "main" }
+
+        # Quick fetch to check for updates
+        & git fetch --quiet origin $branch 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            # Current branch doesn't exist on origin, try main
+            & git fetch --quiet origin main 2>$null
+            if ($LASTEXITCODE -ne 0) {
+                return 2
+            }
+            $branch = "main"
+        }
+
+        $local = & git rev-parse HEAD 2>$null
+        $remote = & git rev-parse "origin/$branch" 2>$null
+
+        # Check if we're behind remote
+        $behind = & git rev-list "HEAD..origin/$branch" --count 2>$null
+        if (-not $behind) { $behind = "0" }
+
+        if (($local -ne $remote) -and ([int]$behind -gt 0)) {
+            # We're behind - safe to pull
+            Write-Output "🔄 Updating documentation..." | Out-Host -ErrorAction SilentlyContinue
+            & git pull --quiet origin $branch 2>&1 | Where-Object { $_ -notmatch "Merge made by" }
+
+            # Check if installer needs updating
+            $versionInt = [int]($SCRIPT_VERSION -replace '^0\.', '' -split '\.')[0]
+            if ($versionInt -ge 3) {
+                Write-Output "🔧 Updating Claude Code Docs installer..." | Out-Host -ErrorAction SilentlyContinue
+                & "$DOCS_PATH\install.ps1" 2>$null
+            }
+        }
+
+        return 0
+    } finally {
+        Pop-Location
+    }
+}
+
+# Function to show documentation sync status
+function Show-Freshness {
+    Print-DocHeader
+
+    # Read manifest
+    if (-not (Test-Path $MANIFEST)) {
+        Write-Output "❌ Error: Documentation not found at ~\.claude-code-docs"
+        Write-Output "Please reinstall with:"
+        Write-Output 'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1" -UseBasicParsing | Invoke-Expression'
+        exit 1
+    }
+
+    # Try to sync with GitHub
+    $syncStatus = Auto-Update
+
+    if ($syncStatus -eq 2) {
+        Write-Output "⚠️  Could not sync with GitHub (using local cache)"
+        Write-Output "Check your internet connection or GitHub access"
+    } else {
+        Push-Location $DOCS_PATH
+        try {
+            $branch = & git rev-parse --abbrev-ref HEAD 2>$null
+            if (-not $branch) { $branch = "main" }
+
+            $compareBranch = $branch
+            & git rev-parse --verify "origin/$branch" 2>$null | Out-Null
+            if ($LASTEXITCODE -ne 0) {
+                $compareBranch = "main"
+            }
+
+            $ahead = & git rev-list "origin/$compareBranch..HEAD" --count 2>$null
+            if (-not $ahead) { $ahead = "0" }
+            $behind = & git rev-list "HEAD..origin/$compareBranch" --count 2>$null
+            if (-not $behind) { $behind = "0" }
+
+            if ([int]$ahead -gt 0) {
+                Write-Output "⚠️  Local version is ahead of GitHub by $ahead commit(s)"
+            } elseif ([int]$behind -gt 0) {
+                Write-Output "⚠️  Local version is behind GitHub by $behind commit(s)"
+            } else {
+                Write-Output "✅ You have the latest documentation"
+            }
+        } finally {
+            Pop-Location
+        }
+    }
+
+    # Show current branch and version
+    Push-Location $DOCS_PATH
+    try {
+        $branch = & git rev-parse --abbrev-ref HEAD 2>$null
+        if (-not $branch) { $branch = "unknown" }
+        Write-Output "📍 Branch: $branch"
+        Write-Output "📦 Version: $SCRIPT_VERSION"
+    } finally {
+        Pop-Location
+    }
+}
+
+# Function to read documentation
+function Read-Doc {
+    param([string]$Topic)
+
+    $topic = Sanitize-Input $Topic
+
+    # Strip .md extension if user included it
+    $topic = $topic -replace '\.md$', ''
+
+    $docPath = Join-Path $DOCS_PATH "docs\$topic.md"
+
+    if (Test-Path $docPath) {
+        Print-DocHeader
+
+        # Quick check if we're up to date
+        Push-Location $DOCS_PATH
+        try {
+            $branch = & git rev-parse --abbrev-ref HEAD 2>$null
+            if (-not $branch) { $branch = "main" }
+            $version = $SCRIPT_VERSION
+
+            $compareBranch = $branch
+            & git fetch --quiet origin $branch 2>$null
+            if ($LASTEXITCODE -ne 0) {
+                & git fetch --quiet origin main 2>$null
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Output "⚠️  Could not check GitHub for updates - using cached docs (v$version, $branch)"
+                    Write-Output ""
+                    Get-Content $docPath -Raw
+                    Write-Output ""
+                    Write-Output "📖 Official page: https://docs.anthropic.com/en/docs/claude-code/$topic"
+                    return
+                }
+                $compareBranch = "main"
+            }
+
+            $local = & git rev-parse HEAD 2>$null
+            $remote = & git rev-parse "origin/$compareBranch" 2>$null
+            $behind = & git rev-list "HEAD..origin/$compareBranch" --count 2>$null
+            if (-not $behind) { $behind = "0" }
+
+            if (($local -ne $remote) -and ([int]$behind -gt 0)) {
+                # We're behind - safe to update
+                Write-Output "🔄 Updating to latest documentation..."
+                & git pull --quiet origin $compareBranch 2>&1 | Where-Object { $_ -notmatch "Merge made by" }
+
+                $versionInt = [int]($SCRIPT_VERSION -replace '^0\.', '' -split '\.')[0]
+                if ($versionInt -ge 3) {
+                    & "$DOCS_PATH\install.ps1" 2>$null
+                }
+                Write-Output "✅ Updated to latest (v$version, $branch)"
+            } else {
+                $ahead = & git rev-list "origin/$compareBranch..HEAD" --count 2>$null
+                if (-not $ahead) { $ahead = "0" }
+                if ([int]$ahead -gt 0) {
+                    Write-Output "⚠️  Using local development version (v$version, $branch, +$ahead commits)"
+                } else {
+                    Write-Output "✅ You have the latest docs (v$version, $branch)"
+                }
+            }
+        } finally {
+            Pop-Location
+        }
+        Write-Output ""
+
+        Get-Content $docPath -Raw
+        Write-Output ""
+        if ($topic -eq "changelog") {
+            Write-Output "📖 Official source: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
+        } else {
+            Write-Output "📖 Official page: https://docs.anthropic.com/en/docs/claude-code/$topic"
+        }
+    } else {
+        # Always show search interface - never error messages
+        Print-DocHeader
+        Write-Output "🔍 Searching for: $topic"
+        Write-Output ""
+
+        # Try to extract keywords from the topic
+        $stopWords = @('tell','me','about','explain','what','is','are','how','do','to','show','find','search','the','for','in')
+        $keywords = ($topic -split '[^a-zA-Z0-9_-]+') | Where-Object { $_ -and ($_ -notin $stopWords) }
+
+        if ($keywords) {
+            # Search for matching topics
+            $docsDir = Join-Path $DOCS_PATH "docs"
+            $allDocs = Get-ChildItem -Path $docsDir -Filter "*.md" | ForEach-Object { $_.BaseName }
+
+            $matches = @()
+            foreach ($doc in $allDocs) {
+                foreach ($kw in $keywords) {
+                    if ($doc -match [regex]::Escape($kw)) {
+                        $matches += $doc
+                        break
+                    }
+                }
+            }
+            $matches = $matches | Sort-Object -Unique
+
+            if ($matches.Count -gt 0) {
+                Write-Output "Found these related topics:"
+                foreach ($m in $matches) {
+                    Write-Output "  • $m"
+                }
+                Write-Output ""
+                Write-Output "Try: /docs <topic> to read a specific document"
+            } else {
+                Write-Output "No exact matches found. Here are all available topics:"
+                $allDocs | Sort-Object | ForEach-Object { Write-Output "  $_" }
+            }
+        } else {
+            Write-Output "Available topics:"
+            $docsDir = Join-Path $DOCS_PATH "docs"
+            Get-ChildItem -Path $docsDir -Filter "*.md" | ForEach-Object { $_.BaseName } | Sort-Object | ForEach-Object { Write-Output "  $_" }
+        }
+        Write-Output ""
+        Write-Output "💡 Tip: Use grep to search across all docs: cd ~\.claude-code-docs && findstr /s /i 'search term' docs\*.md"
+    }
+}
+
+# Function to list available documentation
+function List-Docs {
+    Print-DocHeader
+
+    # Auto-update to ensure fresh list
+    Auto-Update | Out-Null
+
+    Write-Output "Available documentation topics:"
+    Write-Output ""
+    $docsDir = Join-Path $DOCS_PATH "docs"
+    Get-ChildItem -Path $docsDir -Filter "*.md" | ForEach-Object { $_.BaseName } | Sort-Object | ForEach-Object { Write-Output "  $_" }
+    Write-Output ""
+    Write-Output "Usage: /docs <topic> or /docs -t to check freshness"
+}
+
+# Function for hook check (auto-update)
+function Hook-Check {
+    exit 0
+}
+
+# Function to show what's new (simplified version)
+function Whats-New {
+    Print-DocHeader
+
+    # Auto-update first (synchronous - we need latest git history)
+    Auto-Update | Out-Null
+
+    Push-Location $DOCS_PATH
+    try {
+        Write-Output "📚 Recent documentation updates:"
+        Write-Output ""
+
+        # Get recent commits
+        $commitLines = & git log --oneline -10 -- "docs/*.md" 2>$null | Where-Object { $_ -notmatch "Merge" }
+        $count = 0
+
+        foreach ($commitLine in $commitLines) {
+            if ($count -ge 5) { break }
+
+            $hash = ($commitLine -split ' ')[0]
+            $date = & git show -s --format=%cr $hash 2>$null
+            if (-not $date) { $date = "unknown" }
+
+            Write-Output "• $date :"
+            Write-Output "  📎 https://github.com/ericbuess/claude-code-docs/commit/$hash"
+
+            # Show which docs changed
+            $changedDocs = & git diff-tree --no-commit-id --name-only -r $hash -- "docs/*.md" 2>$null
+            if ($changedDocs) {
+                $shown = 0
+                foreach ($doc in $changedDocs) {
+                    if ($shown -ge 5) { break }
+                    $docName = $doc -replace '^docs/', '' -replace '\.md$', ''
+                    Write-Output "  📄 $docName : https://docs.anthropic.com/en/docs/claude-code/$docName"
+                    $shown++
+                }
+            }
+            Write-Output ""
+            $count++
+        }
+
+        if ($count -eq 0) {
+            Write-Output "No recent documentation updates found."
+            Write-Output ""
+        }
+
+        Write-Output "📎 Full changelog: https://github.com/ericbuess/claude-code-docs/commits/main/docs"
+        Write-Output "📚 COMMUNITY MIRROR - NOT AFFILIATED WITH ANTHROPIC"
+    } finally {
+        Pop-Location
+    }
+}
+
+# Function for uninstall
+function Show-Uninstall {
+    Print-DocHeader
+    Write-Output "To uninstall Claude Code Documentation Mirror"
+    Write-Output "==========================================="
+    Write-Output ""
+
+    Write-Output "This will remove:"
+    Write-Output "  • The /docs command from ~\.claude\commands\docs.md"
+    Write-Output "  • The auto-update hook from ~\.claude\settings.json"
+    Write-Output "  • The installation directory ~\.claude-code-docs"
+    Write-Output ""
+
+    Write-Output "Run this command in PowerShell:"
+    Write-Output ""
+    Write-Output "  & `"$env:USERPROFILE\.claude-code-docs\uninstall.ps1`""
+    Write-Output ""
+}
+
+# Main command handling
+$FullArgs = $args -join ' '
+
+# Check if arguments start with -t flag
+if ($FullArgs -match '^-t(\s+(.*))?$') {
+    Show-Freshness
+    $remainingArgs = $matches[2]
+    if ($remainingArgs -match '^what.?s?\s?new') {
+        Write-Output ""
+        Whats-New
+    } elseif ($remainingArgs) {
+        Write-Output ""
+        Read-Doc -Topic (Sanitize-Input $remainingArgs)
+    }
+    exit 0
+} elseif ($FullArgs -match '^--check(\s+(.*))?$') {
+    Show-Freshness
+    $remainingArgs = $matches[2]
+    if ($remainingArgs -match '^what.?s?\s?new') {
+        Write-Output ""
+        Whats-New
+    } elseif ($remainingArgs) {
+        Write-Output ""
+        Read-Doc -Topic (Sanitize-Input $remainingArgs)
+    }
+    exit 0
+}
+
+# Main command handling
+$cmd = if ($args.Count -gt 0) { $args[0] } else { "" }
+
+switch -Regex ($cmd) {
+    '^(-t|--check)$' {
+        Show-Freshness
+        $remaining = ($args | Select-Object -Skip 1) -join ' '
+        if ($remaining -match 'what.?s?\s?new') {
+            Write-Output ""
+            Whats-New
+        } elseif ($remaining) {
+            Write-Output ""
+            Read-Doc -Topic (Sanitize-Input $remaining)
+        }
+    }
+    '^hook-check$' {
+        Hook-Check
+    }
+    '^uninstall$' {
+        Show-Uninstall
+    }
+    '^(whats-new|whats|what)$' {
+        $remaining = ($args | Select-Object -Skip 1) -join ' '
+        if ($remaining -match 'new' -or $FullArgs -match 'what.*new') {
+            Whats-New
+        } else {
+            Read-Doc -Topic (Sanitize-Input ($args[0]))
+        }
+    }
+    '^$' {
+        List-Docs
+    }
+    default {
+        if ($FullArgs -match 'what.*new') {
+            Whats-New
+        } else {
+            Read-Doc -Topic (Sanitize-Input ($args[0]))
+        }
+    }
+}
+
+# Ensure script always exits successfully
+exit 0

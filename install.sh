@@ -20,21 +20,221 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     OS_TYPE="linux"
     echo "✓ Detected Linux"
+elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    OS_TYPE="windows"
+    echo "✓ Detected Windows (Git Bash/MSYS)"
 else
     echo "❌ Error: Unsupported OS type: $OSTYPE"
-    echo "This installer supports macOS and Linux only"
+    echo "This installer supports macOS, Linux, and Windows (Git Bash)"
+    echo "For Windows PowerShell, use: irm https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1 | iex"
     exit 1
 fi
 
 # Check dependencies
 echo "Checking dependencies..."
-for cmd in git jq curl; do
+
+# jq fallback: use python if jq is not available (common on Windows)
+if ! command -v jq &> /dev/null; then
+    if command -v python3 &> /dev/null; then
+        PY_CMD="python3"
+    elif command -v python &> /dev/null; then
+        PY_CMD="python"
+    else
+        echo "❌ Error: jq or python is required but neither is installed"
+        echo "Please install jq (https://jqlang.github.io/jq/) or python and try again"
+        exit 1
+    fi
+    echo "  ℹ️  jq not found, using Python for JSON operations"
+
+    # Create a small Python helper for settings.json manipulation
+    JSON_HELPER=$(mktemp)
+    trap 'rm -f "$JSON_HELPER"' EXIT
+    cat > "$JSON_HELPER" << 'PYEOF'
+#!/usr/bin/env python3
+"""Minimal jq replacement for claude-code-docs installer."""
+import json, sys
+
+def main():
+    action = sys.argv[1] if len(sys.argv) > 1 else ""
+
+    if action == "list-hook-commands":
+        # Equivalent: jq -r '.hooks.PreToolUse[]?.hooks[]?.command // empty' FILE
+        filepath = sys.argv[2]
+        try:
+            with open(filepath) as f:
+                data = json.load(f)
+            hooks = data.get("hooks", {}).get("PreToolUse", [])
+            for hook_group in hooks:
+                for h in hook_group.get("hooks", []):
+                    cmd = h.get("command", "")
+                    if cmd:
+                        print(cmd)
+        except Exception:
+            pass
+
+    elif action == "remove-and-add-hook":
+        # Equivalent to:
+        #   jq 'select(contains("claude-code-docs") | not)' | jq 'add new hook'
+        # Removes all hooks with "claude-code-docs" in command, then adds new hook
+        filepath = sys.argv[2]
+        new_cmd = sys.argv[3]
+        try:
+            with open(filepath) as f:
+                data = json.load(f)
+        except Exception:
+            data = {}
+
+        # Ensure structure
+        if "hooks" not in data:
+            data["hooks"] = {}
+        if "PreToolUse" not in data["hooks"]:
+            data["hooks"]["PreToolUse"] = []
+
+        # Remove hooks containing "claude-code-docs"
+        data["hooks"]["PreToolUse"] = [
+            group for group in data["hooks"]["PreToolUse"]
+            if not any(
+                "claude-code-docs" in h.get("command", "")
+                for h in group.get("hooks", [])
+            )
+        ]
+
+        # Add new hook
+        new_hook = {
+            "matcher": "Read",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": new_cmd
+                }
+            ]
+        }
+        data["hooks"]["PreToolUse"].append(new_hook)
+
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=2)
+
+    elif action == "create-settings":
+        # Equivalent to: jq -n --arg cmd CMD '{...}'
+        filepath = sys.argv[2]
+        new_cmd = sys.argv[3]
+        data = {
+            "hooks": {
+                "PreToolUse": [
+                    {
+                        "matcher": "Read",
+                        "hooks": [
+                            {
+                                "type": "command",
+                                "command": new_cmd
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=2)
+
+    elif action == "cleanup-hooks":
+        # For uninstall: remove hooks and clean empty structures
+        filepath = sys.argv[2]
+        try:
+            with open(filepath) as f:
+                data = json.load(f)
+        except Exception:
+            data = {}
+
+        if "hooks" in data and "PreToolUse" in data["hooks"]:
+            data["hooks"]["PreToolUse"] = [
+                group for group in data["hooks"]["PreToolUse"]
+                if not any(
+                    "claude-code-docs" in h.get("command", "")
+                    for h in group.get("hooks", [])
+                )
+            ]
+            if not data["hooks"]["PreToolUse"]:
+                del data["hooks"]["PreToolUse"]
+            if not data["hooks"]:
+                del data["hooks"]
+
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=2)
+
+if __name__ == "__main__":
+    main()
+PYEOF
+    chmod +x "$JSON_HELPER"
+else
+    PY_CMD=""
+    JSON_HELPER=""
+fi
+
+# Wrapper functions for settings.json operations
+settings_list_hooks() {
+    if [[ -n "$PY_CMD" ]]; then
+        "$PY_CMD" "$JSON_HELPER" list-hook-commands "$1"
+    else
+        jq -r '.hooks.PreToolUse[]?.hooks[]?.command // empty' "$1" 2>/dev/null
+    fi
+}
+
+settings_remove_and_add_hook() {
+    if [[ -n "$PY_CMD" ]]; then
+        "$PY_CMD" "$JSON_HELPER" remove-and-add-hook "$1" "$2"
+    else
+        jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' "$1" > "${1}.tmp"
+        jq --arg cmd "$2" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[]] + [{"matcher": "Read", "hooks": [{"type": "command", "command": $cmd}]}]' "${1}.tmp" > "$1"
+        rm -f "${1}.tmp"
+    fi
+}
+
+settings_create_new() {
+    if [[ -n "$PY_CMD" ]]; then
+        "$PY_CMD" "$JSON_HELPER" create-settings "$1" "$2"
+    else
+        jq -n --arg cmd "$2" '{
+            "hooks": {
+                "PreToolUse": [
+                    {
+                        "matcher": "Read",
+                        "hooks": [
+                            {
+                                "type": "command",
+                                "command": $cmd
+                            }
+                        ]
+                    }
+                ]
+            }
+        }' > "$1"
+    fi
+}
+
+settings_cleanup_hooks() {
+    if [[ -n "$PY_CMD" ]]; then
+        "$PY_CMD" "$JSON_HELPER" cleanup-hooks "$1"
+    else
+        jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' "$1" > "${1}.tmp"
+        jq 'if .hooks.PreToolUse == [] then .hooks |= if . == {PreToolUse: []} then {} else del(.PreToolUse) end else . end | if .hooks == {} then del(.hooks) else . end' "${1}.tmp" > "${1}.tmp2"
+        mv "${1}.tmp2" "$1"
+        rm -f "${1}.tmp"
+    fi
+}
+
+for cmd in git curl; do
     if ! command -v "$cmd" &> /dev/null; then
         echo "❌ Error: $cmd is required but not installed"
         echo "Please install $cmd and try again"
         exit 1
     fi
 done
+
+# column fallback for Windows
+if ! command -v column &> /dev/null; then
+    column() { cat; }
+fi
+
 echo "✓ All dependencies satisfied"
 
 
@@ -72,7 +272,7 @@ find_existing_installations() {
     
     # Check settings.json hooks for paths
     if [[ -f ~/.claude/settings.json ]]; then
-        local hooks=$(jq -r '.hooks.PreToolUse[]?.hooks[]?.command // empty' ~/.claude/settings.json 2>/dev/null)
+        local hooks=$(settings_list_hooks ~/.claude/settings.json)
         while IFS= read -r cmd; do
             if [[ "$cmd" =~ claude-code-docs ]]; then
                 # Extract paths from v0.1 complex hook format
@@ -462,33 +662,14 @@ HOOK_COMMAND="~/.claude-code-docs/claude-docs-helper.sh hook-check"
 if [ -f ~/.claude/settings.json ]; then
     # Update existing settings.json
     echo "  Updating Claude settings..."
-    
-    # First remove ALL hooks that contain "claude-code-docs" anywhere in the command
-    # This catches old installations at any path
-    jq '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[] | select(.hooks[0].command | contains("claude-code-docs") | not)]' ~/.claude/settings.json > ~/.claude/settings.json.tmp
-    
-    # Then add our new hook
-    jq --arg cmd "$HOOK_COMMAND" '.hooks.PreToolUse = [(.hooks.PreToolUse // [])[]] + [{"matcher": "Read", "hooks": [{"type": "command", "command": $cmd}]}]' ~/.claude/settings.json.tmp > ~/.claude/settings.json
-    rm -f ~/.claude/settings.json.tmp
+
+    # Remove all claude-code-docs hooks and add our new hook
+    settings_remove_and_add_hook ~/.claude/settings.json "$HOOK_COMMAND"
     echo "✓ Updated Claude settings"
 else
     # Create new settings.json
     echo "  Creating Claude settings..."
-    jq -n --arg cmd "$HOOK_COMMAND" '{
-        "hooks": {
-            "PreToolUse": [
-                {
-                    "matcher": "Read",
-                    "hooks": [
-                        {
-                            "type": "command",
-                            "command": $cmd
-                        }
-                    ]
-                }
-            ]
-        }
-    }' > ~/.claude/settings.json
+    settings_create_new ~/.claude/settings.json "$HOOK_COMMAND"
     echo "✓ Created Claude settings"
 fi
 

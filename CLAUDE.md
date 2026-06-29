@@ -14,8 +14,10 @@ When responding to /docs commands:
 ## Files to ultrathink about
 
 @install.sh
+@install.ps1
 @README.md
 @uninstall.sh
+@uninstall.ps1
 @UNINSTALL.md
 @claude-docs-helper.md
 @scripts/

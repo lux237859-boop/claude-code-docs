@@ -1,7 +1,7 @@
 # Claude Code Documentation Mirror
 
 [![Last Update](https://img.shields.io/github/last-commit/ericbuess/claude-code-docs/main.svg?label=docs%20updated)](https://github.com/ericbuess/claude-code-docs/commits/main)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-blue)]()
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)]()
 [![Beta](https://img.shields.io/badge/status-early%20beta-orange)](https://github.com/ericbuess/claude-code-docs/issues)
 
 Local mirror of Claude Code documentation files from https://docs.anthropic.com/en/docs/claude-code/, updated every 3 hours.
@@ -35,7 +35,21 @@ curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/ins
 
 - ✅ **macOS**: Fully supported (tested on macOS 12+)
 - ✅ **Linux**: Fully supported (Ubuntu, Debian, Fedora, etc.)
-- ⏳ **Windows**: Not yet supported - [contributions welcome](#contributing)!
+- ✅ **Windows**: Fully supported (PowerShell 5.1+ or Git Bash)
+
+### Windows Installation
+
+On Windows, use PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1 | iex
+```
+
+Or Git Bash:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+```
 
 ### Prerequisites
 
@@ -47,10 +61,18 @@ This tool requires the following to be installed:
 
 ## Installation
 
+### macOS/Linux
+
 Run this single command:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1 | iex
 ```
 
 This will:
@@ -168,6 +190,8 @@ If documentation seems outdated:
 
 ## Uninstalling
 
+### macOS/Linux
+
 To completely remove the docs integration:
 
 ```bash
@@ -177,6 +201,17 @@ To completely remove the docs integration:
 Or run:
 ```bash
 ~/.claude-code-docs/uninstall.sh
+```
+
+### Windows (PowerShell)
+
+```powershell
+& "$env:USERPROFILE\.claude-code-docs\uninstall.ps1"
+```
+
+Or:
+```powershell
+/docs uninstall
 ```
 
 See [UNINSTALL.md](UNINSTALL.md) for manual uninstall instructions.
@@ -209,7 +244,6 @@ See [UNINSTALL.md](UNINSTALL.md) for manual uninstall instructions.
 
 **Contributions are welcome!** This is a community project and we'd love your help:
 
-- 🪟 **Windows Support**: Want to help add Windows compatibility? [Fork the repository](https://github.com/ericbuess/claude-code-docs/fork) and submit a PR!
 - 🐛 **Bug Reports**: Found something not working? [Open an issue](https://github.com/ericbuess/claude-code-docs/issues)
 - 💡 **Feature Requests**: Have an idea? [Start a discussion](https://github.com/ericbuess/claude-code-docs/issues)
 - 📝 **Documentation**: Help improve docs or add examples
