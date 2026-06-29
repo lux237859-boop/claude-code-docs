@@ -12,10 +12,14 @@ $INSTALL_DIR = Join-Path $env:USERPROFILE ".claude-code-docs"
 # Branch to use for installation
 $INSTALL_BRANCH = "main"
 
+# GitHub repository (change this to your fork if needed)
+$GITHUB_REPO = "lux237859-boop/claude-code-docs"
+$UPSTREAM_REPO = "ericbuess/claude-code-docs"  # Original upstream for attribution
+
 # Check if running on Windows
 if ($env:OS -ne "Windows_NT") {
     Write-Output "❌ Error: This installer is for Windows only"
-    Write-Output "For macOS/Linux, use: curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash"
+    Write-Output "For macOS/Linux, use: curl -fsSL https://raw.githubusercontent.com/$GITHUB_REPO/main/install.sh | bash"
     exit 1
 }
 
@@ -114,7 +118,7 @@ function Migrate-Installation {
 
     # Fresh install at new location
     Write-Output "Installing fresh at ~\.claude-code-docs..."
-    & git clone -b $INSTALL_BRANCH https://github.com/ericbuess/claude-code-docs.git $INSTALL_DIR
+    & git clone -b $INSTALL_BRANCH https://github.com/$GITHUB_REPO.git $INSTALL_DIR
     Push-Location $INSTALL_DIR
     Pop-Location
 
@@ -288,7 +292,7 @@ if ((Test-Path $INSTALL_DIR) -and (Test-Path $manifestFile)) {
         Write-Output "No existing installation found"
         Write-Output "Installing fresh to ~\.claude-code-docs..."
 
-        & git clone -b $INSTALL_BRANCH https://github.com/ericbuess/claude-code-docs.git $INSTALL_DIR
+        & git clone -b $INSTALL_BRANCH https://github.com/$GITHUB_REPO.git $INSTALL_DIR
         Push-Location $INSTALL_DIR
         Pop-Location
     }
@@ -309,7 +313,7 @@ if (Test-Path $templatePath) {
 } else {
     Write-Output "  ⚠️  Template file missing, attempting recovery..."
     try {
-        $templateUrl = "https://raw.githubusercontent.com/ericbuess/claude-code-docs/$INSTALL_BRANCH/scripts/claude-docs-helper.ps1.template"
+        $templateUrl = "https://raw.githubusercontent.com/$GITHUB_REPO/$INSTALL_BRANCH/scripts/claude-docs-helper.ps1.template"
         Invoke-WebRequest -Uri $templateUrl -OutFile $helperPath -UseBasicParsing
         Write-Output "  ✓ Helper script downloaded directly"
     } catch {
@@ -340,7 +344,7 @@ Usage:
 Examples of expected output:
 
 When reading a doc:
-📚 COMMUNITY MIRROR: https://github.com/ericbuess/claude-code-docs
+📚 COMMUNITY MIRROR: https://github.com/$GITHUB_REPO
 📖 OFFICIAL DOCS: https://docs.anthropic.com/en/docs/claude-code
 
 [Doc content here...]
@@ -351,13 +355,13 @@ When showing what's new:
 📚 Recent documentation updates:
 
 • 5 hours ago:
-  📎 https://github.com/ericbuess/claude-code-docs/commit/eacd8e1
+  📎 https://github.com/$GITHUB_REPO/commit/eacd8e1
   📄 data-usage: https://docs.anthropic.com/en/docs/claude-code/data-usage
      ➕ Added: Privacy safeguards
   📄 security: https://docs.anthropic.com/en/docs/claude-code/security
      ✨ Data flow and dependencies section moved here
 
-📎 Full changelog: https://github.com/ericbuess/claude-code-docs/commits/main/docs
+📎 Full changelog: https://github.com/$GITHUB_REPO/commits/main/docs
 📚 COMMUNITY MIRROR - NOT AFFILIATED WITH ANTHROPIC
 
 Every request checks for the latest documentation from GitHub (takes ~0.4s).
@@ -381,12 +385,12 @@ if (Test-Path $settingsFile) {
     try {
         $settings = Get-Content $settingsFile -Raw | ConvertFrom-Json
     } catch {
-        $settings = @{} | ConvertFrom-Json
+        $settings = New-Object PSObject
     }
 
     # Ensure hooks structure exists
     if (-not $settings.hooks) {
-        $settings | Add-Member -NotePropertyName "hooks" -NotePropertyValue (@{} | ConvertFrom-Json) -Force
+        $settings | Add-Member -NotePropertyName "hooks" -NotePropertyValue (New-Object PSObject) -Force
     }
     if (-not $settings.hooks.PreToolUse) {
         $settings.hooks | Add-Member -NotePropertyName "PreToolUse" -NotePropertyValue @() -Force
@@ -414,7 +418,7 @@ if (Test-Path $settingsFile) {
                 command = $hookCommand
             }
         )
-    } | ConvertFrom-Json
+    } | ConvertTo-Json | ConvertFrom-Json
 
     $filteredHooks += $newHook
     $settings.hooks.PreToolUse = $filteredHooks

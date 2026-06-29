@@ -13,6 +13,9 @@ $SCRIPT_VERSION = "0.3.3"
 
 # Fixed installation path
 $DOCS_PATH = Join-Path $env:USERPROFILE ".claude-code-docs"
+
+# GitHub repository (change this to your fork if needed)
+$GITHUB_REPO = "lux237859-boop/claude-code-docs"
 $MANIFEST = Join-Path $DOCS_PATH "docs\docs_manifest.json"
 
 # Enhanced sanitize function to prevent command injection
@@ -26,7 +29,7 @@ function Sanitize-Input {
 
 # Function to print documentation header
 function Print-DocHeader {
-    Write-Output "📚 COMMUNITY MIRROR: https://github.com/ericbuess/claude-code-docs"
+    Write-Output "📚 COMMUNITY MIRROR: https://github.com/$GITHUB_REPO"
     Write-Output "📖 OFFICIAL DOCS: https://docs.anthropic.com/en/docs/claude-code"
     Write-Output ""
 }
@@ -92,7 +95,7 @@ function Show-Freshness {
     if (-not (Test-Path $MANIFEST)) {
         Write-Output "❌ Error: Documentation not found at ~\.claude-code-docs"
         Write-Output "Please reinstall with:"
-        Write-Output 'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1" -UseBasicParsing | Invoke-Expression'
+        Write-Output "Invoke-WebRequest -Uri `"https://raw.githubusercontent.com/$GITHUB_REPO/main/install.ps1`" -UseBasicParsing | Invoke-Expression"
         exit 1
     }
 
@@ -309,7 +312,7 @@ function Whats-New {
             if (-not $date) { $date = "unknown" }
 
             Write-Output "• $date :"
-            Write-Output "  📎 https://github.com/ericbuess/claude-code-docs/commit/$hash"
+            Write-Output "  📎 https://github.com/$GITHUB_REPO/commit/$hash"
 
             # Show which docs changed
             $changedDocs = & git diff-tree --no-commit-id --name-only -r $hash -- "docs/*.md" 2>$null
@@ -331,7 +334,7 @@ function Whats-New {
             Write-Output ""
         }
 
-        Write-Output "📎 Full changelog: https://github.com/ericbuess/claude-code-docs/commits/main/docs"
+        Write-Output "📎 Full changelog: https://github.com/$GITHUB_REPO/commits/main/docs"
         Write-Output "📚 COMMUNITY MIRROR - NOT AFFILIATED WITH ANTHROPIC"
     } finally {
         Pop-Location

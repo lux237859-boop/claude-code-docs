@@ -3,6 +3,9 @@
 
 $ErrorActionPreference = "Stop"
 
+# GitHub repository (change this to your fork if needed)
+$GITHUB_REPO = "lux237859-boop/claude-code-docs"
+
 Write-Output "Claude Code Documentation Mirror - Uninstaller (PowerShell)"
 Write-Output "==========================================================="
 Write-Output ""
@@ -172,4 +175,4 @@ Write-Output ""
 Write-Output "✅ Uninstall complete!"
 Write-Output ""
 Write-Output "To reinstall:"
-Write-Output 'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.ps1" -UseBasicParsing | Invoke-Expression'
+Write-Output "Invoke-WebRequest -Uri `"https://raw.githubusercontent.com/$GITHUB_REPO/main/install.ps1`" -UseBasicParsing | Invoke-Expression"

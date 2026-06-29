@@ -4,6 +4,9 @@ set -euo pipefail
 # Claude Code Documentation Mirror - Smart Uninstaller
 # Dynamically finds and removes all installations
 
+# GitHub repository (change this to your fork if needed)
+GITHUB_REPO="lux237859-boop/claude-code-docs"
+
 echo "Claude Code Documentation Mirror - Uninstaller"
 echo "=============================================="
 echo ""
@@ -212,4 +215,4 @@ echo ""
 echo "✅ Uninstall complete!"
 echo ""
 echo "To reinstall:"
-echo "curl -fsSL https://raw.githubusercontent.com/ericbuess/claude-code-docs/main/install.sh | bash"
+echo "curl -fsSL https://raw.githubusercontent.com/$GITHUB_REPO/main/install.sh | bash"
