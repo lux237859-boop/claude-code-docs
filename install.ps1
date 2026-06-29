@@ -379,79 +379,110 @@ Write-Output "Setting up automatic updates..."
 $hookCommand = "powershell -ExecutionPolicy Bypass -File ~\.claude-code-docs\claude-docs-helper.ps1 hook-check"
 
 $settingsFile = Join-Path $env:USERPROFILE ".claude\settings.json"
-if (Test-Path $settingsFile) {
-    Write-Output "  Updating Claude settings..."
 
-    try {
-        $settings = Get-Content $settingsFile -Raw | ConvertFrom-Json
-    } catch {
-        $settings = New-Object PSObject
-    }
+# Use Python for reliable JSON manipulation (PowerShell 5.1 ConvertTo-Json loses nested data)
+$pyCmd = $null
+if (Get-Command python3 -ErrorAction SilentlyContinue) { $pyCmd = "python3" }
+elseif (Get-Command python -ErrorAction SilentlyContinue) { $pyCmd = "python" }
+else {
+    Write-Output "❌ Error: python is required for settings.json manipulation"
+    exit 1
+}
 
-    # Ensure hooks structure exists
-    if (-not $settings.hooks) {
-        $settings | Add-Member -NotePropertyName "hooks" -NotePropertyValue (New-Object PSObject) -Force
-    }
-    if (-not $settings.hooks.PreToolUse) {
-        $settings.hooks | Add-Member -NotePropertyName "PreToolUse" -NotePropertyValue @() -Force
-    }
+# Write a temporary Python helper script
+$jsonHelper = Join-Path $env:TEMP "claude-docs-json-helper.py"
+@'
+import json, sys, os
 
-    # Remove ALL hooks that contain "claude-code-docs"
-    $filteredHooks = @($settings.hooks.PreToolUse | Where-Object {
-        $keep = $true
-        if ($_.hooks -and $_.hooks.Count -gt 0) {
-            foreach ($h in $_.hooks) {
-                if ($h.command -match 'claude-code-docs') {
-                    $keep = $false
+def main():
+    action = sys.argv[1] if len(sys.argv) > 1 else ""
+    settings_file = sys.argv[2]
+    hook_cmd = sys.argv[3] if len(sys.argv) > 3 else ""
+
+    if action == "add-hook":
+        # Read existing settings (preserve everything)
+        try:
+            with open(settings_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = {}
+
+        # Ensure hooks structure
+        if "hooks" not in data:
+            data["hooks"] = {}
+        if "PreToolUse" not in data["hooks"]:
+            data["hooks"]["PreToolUse"] = []
+
+        # Remove existing claude-code-docs hooks
+        data["hooks"]["PreToolUse"] = [
+            group for group in data["hooks"]["PreToolUse"]
+            if not any(
+                "claude-code-docs" in h.get("command", "")
+                for h in group.get("hooks", [])
+            )
+        ]
+
+        # Add new hook
+        new_hook = {
+            "matcher": "Read",
+            "hooks": [
+                {
+                    "type": "command",
+                    "command": hook_cmd
                 }
+            ]
+        }
+        data["hooks"]["PreToolUse"].append(new_hook)
+
+        # Write back preserving ALL existing keys
+        with open(settings_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.write('\n')
+
+    elif action == "create-settings":
+        data = {
+            "hooks": {
+                "PreToolUse": [
+                    {
+                        "matcher": "Read",
+                        "hooks": [
+                            {
+                                "type": "command",
+                                "command": hook_cmd
+                            }
+                        ]
+                    }
+                ]
             }
         }
-        $keep
-    })
+        with open(settings_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.write('\n')
 
-    # Add our new hook
-    $newHook = @{
-        matcher = "Read"
-        hooks = @(
-            @{
-                type = "command"
-                command = $hookCommand
-            }
-        )
-    } | ConvertTo-Json | ConvertFrom-Json
+if __name__ == "__main__":
+    main()
+'@ | Set-Content -Path $jsonHelper -Encoding UTF8
 
-    $filteredHooks += $newHook
-    $settings.hooks.PreToolUse = $filteredHooks
-
-    # Write back
-    $settings | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsFile -Encoding UTF8
-    Write-Output "✓ Updated Claude settings"
+if (Test-Path $settingsFile) {
+    Write-Output "  Updating Claude settings..."
+    & $pyCmd $jsonHelper "add-hook" $settingsFile $hookCommand
+    if ($LASTEXITCODE -eq 0) {
+        Write-Output "✓ Updated Claude settings"
+    } else {
+        Write-Output "❌ Failed to update settings"
+    }
 } else {
     Write-Output "  Creating Claude settings..."
     $settingsDir = Split-Path $settingsFile -Parent
     if (-not (Test-Path $settingsDir)) {
         New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
     }
-
-    $newSettings = @{
-        hooks = @{
-            PreToolUse = @(
-                @{
-                    matcher = "Read"
-                    hooks = @(
-                        @{
-                            type = "command"
-                            command = $hookCommand
-                        }
-                    )
-                }
-            )
-        }
-    }
-
-    $newSettings | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsFile -Encoding UTF8
+    & $pyCmd $jsonHelper "create-settings" $settingsFile $hookCommand
     Write-Output "✓ Created Claude settings"
 }
+
+# Clean up temp helper
+Remove-Item $jsonHelper -Force -ErrorAction SilentlyContinue
 
 # Clean up old installations
 Cleanup-OldInstallations -OldInstallations $oldInstallations

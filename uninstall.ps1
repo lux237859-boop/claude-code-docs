@@ -106,41 +106,65 @@ if (Test-Path $settingsFile) {
     $backupFile = "$settingsFile.backup"
     Copy-Item $settingsFile $backupFile -Force
 
-    try {
-        $settings = Get-Content $settingsFile -Raw | ConvertFrom-Json
-    } catch {
-        $settings = @{} | ConvertFrom-Json
+    # Use Python for reliable JSON manipulation (PowerShell 5.1 ConvertTo-Json loses nested data)
+    $pyCmd = $null
+    if (Get-Command python3 -ErrorAction SilentlyContinue) { $pyCmd = "python3" }
+    elseif (Get-Command python -ErrorAction SilentlyContinue) { $pyCmd = "python" }
+    else {
+        Write-Output "❌ Error: python is required for settings.json manipulation"
+        exit 1
     }
 
-    # Remove ALL hooks containing claude-code-docs
-    if ($settings.hooks -and $settings.hooks.PreToolUse) {
-        $filteredHooks = @($settings.hooks.PreToolUse | Where-Object {
-            $keep = $true
-            if ($_.hooks -and $_.hooks.Count -gt 0) {
-                foreach ($h in $_.hooks) {
-                    if ($h.command -match 'claude-code-docs') {
-                        $keep = $false
-                    }
-                }
-            }
-            $keep
-        })
+    # Write a temporary Python helper script
+    $jsonHelper = Join-Path $env:TEMP "claude-docs-uninstall-helper.py"
+    @'
+import json, sys
 
-        if ($filteredHooks.Count -eq 0) {
-            # Remove empty PreToolUse
-            $settings.hooks.PSObject.Properties.Remove('PreToolUse')
-        } else {
-            $settings.hooks.PreToolUse = $filteredHooks
-        }
+def main():
+    settings_file = sys.argv[1]
+
+    try:
+        with open(settings_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return
+
+    # Remove hooks containing claude-code-docs
+    if "hooks" in data and "PreToolUse" in data["hooks"]:
+        data["hooks"]["PreToolUse"] = [
+            group for group in data["hooks"]["PreToolUse"]
+            if not any(
+                "claude-code-docs" in h.get("command", "")
+                for h in group.get("hooks", [])
+            )
+        ]
+
+        # Remove empty PreToolUse
+        if not data["hooks"]["PreToolUse"]:
+            del data["hooks"]["PreToolUse"]
 
         # Remove empty hooks object
-        if ($settings.hooks.PSObject.Properties.Count -eq 0) {
-            $settings.PSObject.Properties.Remove('hooks')
-        }
+        if not data["hooks"]:
+            del data["hooks"]
+
+    # Write back preserving ALL existing keys
+    with open(settings_file, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+        f.write('\n')
+
+if __name__ == "__main__":
+    main()
+'@ | Set-Content -Path $jsonHelper -Encoding UTF8
+
+    & $pyCmd $jsonHelper $settingsFile
+    if ($LASTEXITCODE -eq 0) {
+        Write-Output "✓ Removed hooks (backup: $backupFile)"
+    } else {
+        Write-Output "❌ Failed to remove hooks"
     }
 
-    $settings | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsFile -Encoding UTF8
-    Write-Output "✓ Removed hooks (backup: $backupFile)"
+    # Clean up temp helper
+    Remove-Item $jsonHelper -Force -ErrorAction SilentlyContinue
 }
 
 # Remove directories
