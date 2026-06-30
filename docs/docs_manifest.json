@@ -400,14 +400,20 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "82448630a759042b2d67cde2179b2749fa62c756989c5a4ea27797a270ac0c98",
-      "last_updated": "2026-06-24T15:44:42.973242"
+      "hash": "1657bca1811bd7d1f3f9568a7085c27d48cf639c82d7578dba4c19d827fa0e63",
+      "last_updated": "2026-06-30T17:06:02.233873"
+    },
+    "desktop-linux.md": {
+      "original_url": "https://code.claude.com/docs/en/desktop-linux",
+      "original_md_url": "https://code.claude.com/docs/en/desktop-linux.md",
+      "hash": "868b61deff0c79e95228260d7ec23595bc0578d4e821ac25a23f30b8c0d1ae10",
+      "last_updated": "2026-06-30T17:06:02.898470"
     },
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
       "original_md_url": "https://code.claude.com/docs/en/desktop-quickstart.md",
-      "hash": "61285dca6ff09fab8fe351785c7f2976b14e2974f69ddde577bb8f4ad43461e6",
-      "last_updated": "2026-06-19T07:44:26.272153"
+      "hash": "39af894ebb8e8792ff410cb634f12a3cc7a5729ffe3518d8f6ec8d5cbac3e44d",
+      "last_updated": "2026-06-30T17:06:04.619844"
     },
     "desktop-scheduled-tasks.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-scheduled-tasks",
@@ -778,8 +784,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "fc2c5a4a9389b732fd70a0c0b0a3ca7e915423bba16739fe116d9a6034b6ba9e",
-      "last_updated": "2026-06-25T21:31:50.183425"
+      "hash": "6354f0e598a89697355cfc45806cc973c4c70dbce514dbd46dcaec08b03b6b77",
+      "last_updated": "2026-06-30T17:07:12.249061"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -826,8 +832,8 @@
     "troubleshoot-install.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshoot-install",
       "original_md_url": "https://code.claude.com/docs/en/troubleshoot-install.md",
-      "hash": "91e896304061d1160597e00438b21d91405c93f25dc6b5f5896cf35d210e3d42",
-      "last_updated": "2026-06-26T07:12:54.100250"
+      "hash": "ee682a782a42b200bad6359ddb2128fdc5dbb44846f7982d88e251282ffc56ce",
+      "last_updated": "2026-06-30T17:07:20.478682"
     },
     "troubleshooting.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshooting",
@@ -975,18 +981,18 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-06-30T14:14:45.122650",
-    "fetch_duration_seconds": 183.78313,
-    "total_pages_discovered": 162,
-    "pages_fetched_successfully": 163,
+    "last_fetch_completed": "2026-06-30T17:07:47.445598",
+    "fetch_duration_seconds": 186.348072,
+    "total_pages_discovered": 163,
+    "pages_fetched_successfully": 164,
     "pages_failed": 0,
     "failed_pages": [],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 162,
+    "total_files": 163,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-06-30T14:14:45.122683",
+  "last_updated": "2026-06-30T17:07:47.445625",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
