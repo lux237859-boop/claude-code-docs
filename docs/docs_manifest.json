@@ -796,8 +796,8 @@
     "setup.md": {
       "original_url": "https://code.claude.com/docs/en/setup",
       "original_md_url": "https://code.claude.com/docs/en/setup.md",
-      "hash": "842039a7be374086b54ec52588c894427e72c2d354cd49f3a40ea41a516710f9",
-      "last_updated": "2026-07-13T21:55:08.676162"
+      "hash": "5881b32a9835cf94f5b47d4a33fa796db46904f3d22840fbe13f4e17c55524b9",
+      "last_updated": "2026-07-14T16:13:37.521543"
     },
     "skills.md": {
       "original_url": "https://code.claude.com/docs/en/skills",
@@ -1005,8 +1005,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-14T13:29:21.050569",
-    "fetch_duration_seconds": 180.94147,
+    "last_fetch_completed": "2026-07-14T16:14:17.588189",
+    "fetch_duration_seconds": 201.419641,
     "total_pages_discovered": 167,
     "pages_fetched_successfully": 168,
     "pages_failed": 0,
@@ -1016,7 +1016,7 @@
     "total_files": 167,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-14T13:29:21.050597",
+  "last_updated": "2026-07-14T16:14:17.588214",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
