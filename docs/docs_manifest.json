@@ -340,8 +340,8 @@
     "claude-security.md": {
       "original_url": "https://code.claude.com/docs/en/claude-security",
       "original_md_url": "https://code.claude.com/docs/en/claude-security.md",
-      "hash": "6f9752ae970fb50f74980b86e1c88c97fb921355bc6b143d209ceb4948ffde2a",
-      "last_updated": "2026-07-23T19:15:53.918600"
+      "hash": "0743d991ec5ce85a4e6f5ae73eecc60e5ffda2fd45083e4aa0663823adbc7b08",
+      "last_updated": "2026-07-28T16:40:12.823436"
     },
     "cli-reference.md": {
       "original_url": "https://code.claude.com/docs/en/cli-reference",
@@ -1041,8 +1041,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-28T14:00:19.918741",
-    "fetch_duration_seconds": 194.026191,
+    "last_fetch_completed": "2026-07-28T16:42:14.373896",
+    "fetch_duration_seconds": 235.864003,
     "total_pages_discovered": 173,
     "pages_fetched_successfully": 174,
     "pages_failed": 0,
@@ -1052,7 +1052,7 @@
     "total_files": 173,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-28T14:00:19.918767",
+  "last_updated": "2026-07-28T16:42:14.373932",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
