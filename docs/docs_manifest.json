@@ -36,12 +36,6 @@
       "hash": "6e86a1805d9df68fea4136f08da116f8a3206603a4fe4a08d9aa1dfc5359ff7d",
       "last_updated": "2026-07-29T05:48:20.694354"
     },
-    "agent-sdk__custom-tools.md": {
-      "original_url": "https://code.claude.com/docs/en/agent-sdk/custom-tools",
-      "original_md_url": "https://code.claude.com/docs/en/agent-sdk/custom-tools.md",
-      "hash": "c81ddbb9ca99107bfb040c45d52b08c1a62cfe5261e9193189bb47b687f79eb5",
-      "last_updated": "2026-07-29T16:18:49.601773"
-    },
     "agent-sdk__file-checkpointing.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/file-checkpointing",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/file-checkpointing.md",
@@ -1047,18 +1041,20 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-07-31T16:45:12.278611",
-    "fetch_duration_seconds": 164.055088,
+    "last_fetch_completed": "2026-07-31T19:32:18.633456",
+    "fetch_duration_seconds": 794.387635,
     "total_pages_discovered": 174,
-    "pages_fetched_successfully": 175,
-    "pages_failed": 0,
-    "failed_pages": [],
+    "pages_fetched_successfully": 174,
+    "pages_failed": 1,
+    "failed_pages": [
+      "/docs/en/agent-sdk/custom-tools"
+    ],
     "sitemap_url": "https://code.claude.com/docs/sitemap.xml",
     "base_url": "https://code.claude.com",
-    "total_files": 174,
+    "total_files": 173,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-07-31T16:45:12.278643",
+  "last_updated": "2026-07-31T19:32:18.633486",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
