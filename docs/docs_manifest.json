@@ -1047,8 +1047,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-03T17:09:45.137313",
-    "fetch_duration_seconds": 185.306311,
+    "last_fetch_completed": "2026-08-03T19:30:29.530195",
+    "fetch_duration_seconds": 278.553575,
     "total_pages_discovered": 174,
     "pages_fetched_successfully": 175,
     "pages_failed": 0,
@@ -1058,7 +1058,7 @@
     "total_files": 174,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-03T17:09:45.137342",
+  "last_updated": "2026-08-03T19:30:29.530221",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
