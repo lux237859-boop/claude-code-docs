@@ -730,8 +730,8 @@
     "permission-modes.md": {
       "original_url": "https://code.claude.com/docs/en/permission-modes",
       "original_md_url": "https://code.claude.com/docs/en/permission-modes.md",
-      "hash": "3f985cfb9da3edeffc98114b605b2d67911cb03b8a0a0fe8e53343d48e9bcb05",
-      "last_updated": "2026-08-08T01:18:44.194403"
+      "hash": "d0d7141229b3828cdc1e8d313dc147c52f940fd16292ab40fdb612e7a2844791",
+      "last_updated": "2026-08-08T06:46:24.310023"
     },
     "permissions.md": {
       "original_url": "https://code.claude.com/docs/en/permissions",
@@ -1113,8 +1113,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-08T04:12:26.695735",
-    "fetch_duration_seconds": 214.627245,
+    "last_fetch_completed": "2026-08-08T06:47:14.124061",
+    "fetch_duration_seconds": 168.18677,
     "total_pages_discovered": 185,
     "pages_fetched_successfully": 186,
     "pages_failed": 0,
@@ -1124,7 +1124,7 @@
     "total_files": 185,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-08T04:12:26.695756",
+  "last_updated": "2026-08-08T06:47:14.124090",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
