@@ -460,8 +460,8 @@
     "desktop-linux.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-linux",
       "original_md_url": "https://code.claude.com/docs/en/desktop-linux.md",
-      "hash": "3fb2b62a80c0c054626fccc30d840ba0ec476bde5d59c3704a757b4a8d02685d",
-      "last_updated": "2026-08-21T09:33:14.857450"
+      "hash": "3962791d633a2c52d38d506a47216ff28dbcceb8817b0451a55f6c957bd151c5",
+      "last_updated": "2026-08-26T03:52:00.772483"
     },
     "desktop-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-quickstart",
@@ -1149,8 +1149,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-26T01:07:14.156183",
-    "fetch_duration_seconds": 184.477901,
+    "last_fetch_completed": "2026-08-26T03:53:42.410244",
+    "fetch_duration_seconds": 174.071824,
     "total_pages_discovered": 191,
     "pages_fetched_successfully": 192,
     "pages_failed": 0,
@@ -1160,7 +1160,7 @@
     "total_files": 191,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-26T01:07:14.156203",
+  "last_updated": "2026-08-26T03:53:42.410267",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
