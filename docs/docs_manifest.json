@@ -370,8 +370,8 @@
     "cloud-environments.md": {
       "original_url": "https://code.claude.com/docs/en/cloud-environments",
       "original_md_url": "https://code.claude.com/docs/en/cloud-environments.md",
-      "hash": "4f60cae2896e2963b1c978b62050965fd592743b731b42c585415393db50e7b8",
-      "last_updated": "2026-08-29T18:10:28.578533"
+      "hash": "a7caed2fb6658fb7f2638f1c759c9a28a9e1dd41a5ede3f902d304d9d8a60445",
+      "last_updated": "2026-08-31T03:22:34.312216"
     },
     "code-review.md": {
       "original_url": "https://code.claude.com/docs/en/code-review",
@@ -586,8 +586,8 @@
     "hooks.md": {
       "original_url": "https://code.claude.com/docs/en/hooks",
       "original_md_url": "https://code.claude.com/docs/en/hooks.md",
-      "hash": "70e0b0e2e1cb2b2866580e8417467cc74c732dd3b21f1a519464ba190489578e",
-      "last_updated": "2026-08-30T20:30:45.579530"
+      "hash": "eda66d26982ca7af5574852ba74ad60833baf429f0d25355a38cbadcbee5cc2c",
+      "last_updated": "2026-08-31T03:23:04.072975"
     },
     "hooks-guide.md": {
       "original_url": "https://code.claude.com/docs/en/hooks-guide",
@@ -958,8 +958,8 @@
     "tools-reference.md": {
       "original_url": "https://code.claude.com/docs/en/tools-reference",
       "original_md_url": "https://code.claude.com/docs/en/tools-reference.md",
-      "hash": "21045fa1ae08db958afa473a2664bc36ed0fff116c917a66de2456b937e5a48a",
-      "last_updated": "2026-08-29T18:11:35.610352"
+      "hash": "fb7a88af3f3ce67d5d1017d55617e6921d3eb272b0956540e1cc72b5ad36f4bf",
+      "last_updated": "2026-08-31T03:24:05.837539"
     },
     "troubleshoot-install.md": {
       "original_url": "https://code.claude.com/docs/en/troubleshoot-install",
@@ -1149,8 +1149,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-08-30T23:09:18.163250",
-    "fetch_duration_seconds": 155.181902,
+    "last_fetch_completed": "2026-08-31T03:24:34.500569",
+    "fetch_duration_seconds": 177.347307,
     "total_pages_discovered": 191,
     "pages_fetched_successfully": 192,
     "pages_failed": 0,
@@ -1160,7 +1160,7 @@
     "total_files": 191,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-08-30T23:09:18.163283",
+  "last_updated": "2026-08-31T03:24:34.500604",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
