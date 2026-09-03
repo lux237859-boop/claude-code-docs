@@ -784,8 +784,8 @@
     "prompt-caching.md": {
       "original_url": "https://code.claude.com/docs/en/prompt-caching",
       "original_md_url": "https://code.claude.com/docs/en/prompt-caching.md",
-      "hash": "23e07b44514d9ff546a5c150ffc6836c31db0f0ec8ac72779b88e18bb0203cc1",
-      "last_updated": "2026-09-01T18:11:01.206902"
+      "hash": "896f69cf6d5f367decef102622285a71a6c6ca36274a015b8d3889d33f8d9263",
+      "last_updated": "2026-09-03T02:48:51.843462"
     },
     "prompt-library.md": {
       "original_url": "https://code.claude.com/docs/en/prompt-library",
@@ -1149,8 +1149,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-02T22:59:54.265434",
-    "fetch_duration_seconds": 148.576671,
+    "last_fetch_completed": "2026-09-03T02:49:48.151762",
+    "fetch_duration_seconds": 181.604468,
     "total_pages_discovered": 191,
     "pages_fetched_successfully": 192,
     "pages_failed": 0,
@@ -1160,7 +1160,7 @@
     "total_files": 191,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-02T22:59:54.265460",
+  "last_updated": "2026-09-03T02:49:48.151792",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
