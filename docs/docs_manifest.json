@@ -105,8 +105,8 @@
     "agent-sdk__plugins.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/plugins",
       "original_md_url": "https://code.claude.com/docs/en/agent-sdk/plugins.md",
-      "hash": "c8b179ee93ae6f4ee0a7b01b688153988c893a1cbca544859adea71097d296c0",
-      "last_updated": "2026-08-21T09:32:28.078516"
+      "hash": "c0f79d1b6ed8e32def8695828d264110c709300854177c4b1bb524bb1e0a06d6",
+      "last_updated": "2026-09-13T22:50:04.757761"
     },
     "agent-sdk__python.md": {
       "original_url": "https://code.claude.com/docs/en/agent-sdk/python",
@@ -448,8 +448,8 @@
     "desktop.md": {
       "original_url": "https://code.claude.com/docs/en/desktop",
       "original_md_url": "https://code.claude.com/docs/en/desktop.md",
-      "hash": "4700336eefa763c97828a0e3103b5b1ed49244c19dea1a43436e83cfc1d2fbd5",
-      "last_updated": "2026-09-12T02:58:12.510994"
+      "hash": "b8a6ef9c5dd76007afc525b06e2a1efe32e3cc000604f840bafe59492aa8f105",
+      "last_updated": "2026-09-13T22:50:38.832002"
     },
     "desktop-ios-simulator.md": {
       "original_url": "https://code.claude.com/docs/en/desktop-ios-simulator",
@@ -568,8 +568,8 @@
     "goal.md": {
       "original_url": "https://code.claude.com/docs/en/goal",
       "original_md_url": "https://code.claude.com/docs/en/goal.md",
-      "hash": "c4541af0af790dbe36801db79afd07937053e693f4a468fd861b0cfc44a4df34",
-      "last_updated": "2026-09-09T18:18:59.619637"
+      "hash": "50029aae9822b8b13a14111494dc617667b8757d4b49a392c2e0fb83b1ffd227",
+      "last_updated": "2026-09-13T22:50:50.368172"
     },
     "google-vertex-ai.md": {
       "original_url": "https://code.claude.com/docs/en/google-vertex-ai",
@@ -994,8 +994,8 @@
     "vs-code.md": {
       "original_url": "https://code.claude.com/docs/en/vs-code",
       "original_md_url": "https://code.claude.com/docs/en/vs-code.md",
-      "hash": "a52876fd37f42f774ac2759fefb5f5bd430969fd43794d37db1f935f2cb90841",
-      "last_updated": "2026-09-11T18:09:58.796051"
+      "hash": "07a6d7633f46d8984e72db285adff6a2bd4b5393fe6e932788fdbf6732544cca",
+      "last_updated": "2026-09-13T22:51:31.450863"
     },
     "web-quickstart.md": {
       "original_url": "https://code.claude.com/docs/en/web-quickstart",
@@ -1155,8 +1155,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-13T20:17:18.823679",
-    "fetch_duration_seconds": 147.303625,
+    "last_fetch_completed": "2026-09-13T22:51:46.675141",
+    "fetch_duration_seconds": 112.73794,
     "total_pages_discovered": 192,
     "pages_fetched_successfully": 193,
     "pages_failed": 0,
@@ -1166,7 +1166,7 @@
     "total_files": 192,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-13T20:17:18.823705",
+  "last_updated": "2026-09-13T22:51:46.675173",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
