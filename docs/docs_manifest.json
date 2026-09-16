@@ -243,8 +243,8 @@
     "artifacts.md": {
       "original_url": "https://code.claude.com/docs/en/artifacts",
       "original_md_url": "https://code.claude.com/docs/en/artifacts.md",
-      "hash": "492a12958c361764b71acfaf0164140c65c3f22ffc23b99ef121f1350e00de5c",
-      "last_updated": "2026-09-15T23:23:18.059638"
+      "hash": "775c2561af3120ddd2552f96bc99e5f99f4a1cc2c354bc44c4c83eee93de1e46",
+      "last_updated": "2026-09-16T23:31:17.058439"
     },
     "authentication.md": {
       "original_url": "https://code.claude.com/docs/en/authentication",
@@ -1179,8 +1179,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-16T20:51:37.248416",
-    "fetch_duration_seconds": 134.595378,
+    "last_fetch_completed": "2026-09-16T23:32:51.863273",
+    "fetch_duration_seconds": 121.154935,
     "total_pages_discovered": 196,
     "pages_fetched_successfully": 197,
     "pages_failed": 0,
@@ -1190,7 +1190,7 @@
     "total_files": 196,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-16T20:51:37.248438",
+  "last_updated": "2026-09-16T23:32:51.863305",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
