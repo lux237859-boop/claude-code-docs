@@ -2124,7 +2124,7 @@ Linux and WSL2 only.
 
 ### `sandbox.credentials`
 
-Declare the credential files and environment variables to [protect from sandboxed commands](/docs/en/sandboxing#protect-credentials). Each entry names a file `path` or a variable `name` and a `mode`: `deny` hides the credential inside the sandbox, and `mask` shows sandboxed commands a placeholder while the [sandbox proxy](/docs/en/sandboxing#mask-credentials) substitutes the real value on outbound requests. Claude Code protects only the entries you list; there is no built-in credential deny list. Requires Claude Code v2.1.187 or later.
+Declare the credential files and environment variables to [protect from sandboxed commands](/docs/en/sandboxing#protect-credentials). Each entry names a file `path` or a variable `name` and a `mode`: `deny` hides the credential inside the sandbox, and `mask` shows sandboxed commands a placeholder while the [sandbox proxy](/docs/en/sandboxing#mask-credentials) substitutes the real value on outbound requests. Claude Code protects only the entries you list; there is no built-in credential deny list.
 
 * **Scope**: [`Any file`](#scopes). Claude Code honors `mask` entries, `allowPlaintextInject`, `awsPairs`, and `sigv4` only from user settings, managed settings, and the `--settings` flag.
 * **Type**: object with `files`, `envVars`, `allowPlaintextInject`, `awsPairs`, and `sigv4`
@@ -2143,7 +2143,7 @@ This hides your AWS credentials file and removes `GITHUB_TOKEN` from sandboxed c
 }
 ```
 
-The `deny` file protection is part of the filesystem layer, so it doesn't apply when you [disable filesystem isolation](/docs/en/sandboxing#disable-filesystem-isolation); the environment variable protection still does. Requires Claude Code v2.1.187 or later.
+The `deny` file protection is part of the filesystem layer, so it doesn't apply when you [disable filesystem isolation](/docs/en/sandboxing#disable-filesystem-isolation); the environment variable protection still does.
 
 #### Invalid credential entries in managed settings
 
@@ -2157,7 +2157,7 @@ Applies in v2.1.191 and later; before v2.1.221, every invalid entry was stripped
 
 ### `sandbox.credentials.files`
 
-Protect credential files or directories from sandboxed commands. With `"mode": "deny"`, Claude Code blocks reads of the path inside the sandbox, the same read block as [`sandbox.filesystem.denyRead`](#sandbox-filesystem-denyread). With `"mode": "mask"`, sandboxed commands on Linux and WSL2 read a sentinel copy of the file, and the sandbox proxy substitutes the real value on outbound requests to that entry's `injectHosts`; on macOS the file is unreadable inside the sandbox instead. Requires Claude Code v2.1.187 or later, and `"mode": "mask"` requires v2.1.221 or later.
+Protect credential files or directories from sandboxed commands. With `"mode": "deny"`, Claude Code blocks reads of the path inside the sandbox, the same read block as [`sandbox.filesystem.denyRead`](#sandbox-filesystem-denyread). With `"mode": "mask"`, sandboxed commands on Linux and WSL2 read a sentinel copy of the file, and the sandbox proxy substitutes the real value on outbound requests to that entry's `injectHosts`; on macOS the file is unreadable inside the sandbox instead. `"mode": "mask"` requires Claude Code v2.1.221 or later.
 
 * **Scope**: [`Any file`](#scopes). Claude Code drops `mask` entries from project `.claude/settings.json` and local `.claude/settings.local.json`.
 * **Type**: array of objects, each with `path` and a `mode` of `"deny"` or `"mask"`, plus the optional [mask fields for files](#mask-fields-for-files)
@@ -2178,7 +2178,7 @@ This hides your AWS credentials file and masks the `gh` hosts file, substituting
 }
 ```
 
-Paths use the same [prefixes](#sandbox-path-prefixes) as the `sandbox.filesystem.*` settings, and Claude Code merges the arrays from every settings scope the session loads. [Protect credentials](/docs/en/sandboxing#protect-credentials) covers what still applies from sources you exclude with `--setting-sources`. Requires Claude Code v2.1.187 or later; `mask` entries require v2.1.221 or later.
+Paths use the same [prefixes](#sandbox-path-prefixes) as the `sandbox.filesystem.*` settings, and Claude Code merges the arrays from every settings scope the session loads. [Protect credentials](/docs/en/sandboxing#protect-credentials) covers what still applies from sources you exclude with `--setting-sources`. `mask` entries require Claude Code v2.1.221 or later.
 
 `mask` substitution runs only through the sandbox proxy, so set [`sandbox.network.tlsTerminate`](#sandbox-network-tlsterminate), or [`allowPlaintextInject`](#sandbox-credentials-allowplaintextinject) for plain-HTTP test networks. `mask` applies to a single file, so list each credential file individually. Claude Code accepts but ignores the `mask` fields on a `deny` entry. [Mask credential files](/docs/en/sandboxing#mask-credential-files) covers which settings sources are honored and when an entry falls back to `deny`.
 
@@ -2230,7 +2230,7 @@ This masks only the `oauth_token` value in the `gh` hosts file, replaces every o
 
 ### `sandbox.credentials.envVars`
 
-Protect environment variables from sandboxed commands. With `"mode": "deny"`, Claude Code removes the variable from the environment of sandboxed commands. With `"mode": "mask"`, sandboxed commands see a per-session sentinel value, and the sandbox proxy substitutes the real value on outbound requests to that entry's `injectHosts`, so tools such as `gh` and `npm` keep authenticating without ever holding the real credential. Requires Claude Code v2.1.187 or later, and `"mode": "mask"` requires v2.1.199 or later.
+Protect environment variables from sandboxed commands. With `"mode": "deny"`, Claude Code removes the variable from the environment of sandboxed commands. With `"mode": "mask"`, sandboxed commands see a per-session sentinel value, and the sandbox proxy substitutes the real value on outbound requests to that entry's `injectHosts`, so tools such as `gh` and `npm` keep authenticating without ever holding the real credential. `"mode": "mask"` requires Claude Code v2.1.199 or later.
 
 * **Scope**: [`Any file`](#scopes). Claude Code drops `mask` entries from project `.claude/settings.json` and local `.claude/settings.local.json`.
 * **Type**: array of objects, each with `name` and a `mode` of `"deny"` or `"mask"`, plus the optional [mask fields for environment variables](#mask-fields-for-environment-variables)
@@ -2251,7 +2251,7 @@ This removes `NPM_TOKEN` from sandboxed commands and masks `GITHUB_TOKEN`, subst
 }
 ```
 
-The `name` must start with a letter or underscore and contain only letters, digits, and underscores. Claude Code merges the arrays from every settings scope the session loads, and applies `deny` when the same variable appears with both modes. [Protect credentials](/docs/en/sandboxing#protect-credentials) covers what still applies from sources you exclude with `--setting-sources`. Requires Claude Code v2.1.187 or later; `mask` entries require v2.1.199 or later.
+The `name` must start with a letter or underscore and contain only letters, digits, and underscores. Claude Code merges the arrays from every settings scope the session loads, and applies `deny` when the same variable appears with both modes. [Protect credentials](/docs/en/sandboxing#protect-credentials) covers what still applies from sources you exclude with `--setting-sources`. `mask` entries require Claude Code v2.1.199 or later.
 
 `mask` substitution runs only through the sandbox proxy, so set [`sandbox.network.tlsTerminate`](#sandbox-network-tlsterminate), or [`allowPlaintextInject`](#sandbox-credentials-allowplaintextinject) for plain-HTTP test networks; see [Mask environment variables](/docs/en/sandboxing#mask-environment-variables). Claude Code accepts but ignores the `mask` fields on a `deny` entry.
 
@@ -3231,7 +3231,7 @@ Control whether the `@` file picker leaves out files that match `.gitignore` pat
 
 ### `respondToBashCommands`
 
-Choose whether Claude responds after you run a shell command with the [`!` prefix](/docs/en/interactive-mode#shell-mode-with-prefix) in the input box. By default, Claude Code adds the command's output to the conversation and Claude replies to it. Set this key to `false` to add the output to context without a reply, so you can run several commands and ask about them together. Requires Claude Code v2.1.186 or later.
+Choose whether Claude responds after you run a shell command with the [`!` prefix](/docs/en/interactive-mode#shell-mode-with-prefix) in the input box. By default, Claude Code adds the command's output to the conversation and Claude replies to it. Set this key to `false` to add the output to context without a reply, so you can run several commands and ask about them together.
 
 * **Scope**: [`Any file`](#scopes)
 * **Type**: Boolean
@@ -3245,7 +3245,7 @@ Choose whether Claude responds after you run a shell command with the [`!` prefi
 }
 ```
 
-See [Shell mode with `!` prefix](/docs/en/interactive-mode#shell-mode-with-prefix). Requires Claude Code v2.1.186 or later.
+See [Shell mode with `!` prefix](/docs/en/interactive-mode#shell-mode-with-prefix).
 
 ### `showClearContextOnPlanAccept`
 
@@ -4927,7 +4927,7 @@ Choose where Claude Code shows [agent team](/docs/en/agent-teams) teammates: ins
   * `"in-process"`: teammates run inside your main terminal pane
   * `"auto"`: split panes when you're running inside tmux, or inside iTerm2 with `it2` on your `PATH` or tmux installed; in-process otherwise
   * `"tmux"`: split panes using tmux or iTerm2, detected from your terminal
-  * `"iterm2"`: iTerm2 native split panes through the `it2` CLI, in Claude Code v2.1.186 or later
+  * `"iterm2"`: iTerm2 native split panes through the `it2` CLI
 * **Default**: `"in-process"`
 * **Per-session overrides**: `--teammate-mode` takes precedence over this key for one session
 
@@ -4936,8 +4936,6 @@ Choose where Claude Code shows [agent team](/docs/en/agent-teams) teammates: ins
   "teammateMode": "auto"
 }
 ```
-
-The `iterm2` value requires Claude Code v2.1.186 or later.
 
 <span id="worktree-settings" />
 

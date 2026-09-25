@@ -170,7 +170,7 @@ Store subagent files in different locations depending on scope. When multiple su
 
 **Project subagents** (`.claude/agents/`) are ideal for subagents specific to a codebase. Check them into version control so your team can use and improve them collaboratively.
 
-Project subagents are discovered by walking up from the current working directory, so every `.claude/agents/` between there and the repository root is scanned. As of v2.1.178, when more than one of these nested directories defines the same `name`, Claude Code uses the definition closest to the working directory.
+Project subagents are discovered by walking up from the current working directory, so every `.claude/agents/` between there and the repository root is scanned. When more than one of these nested directories defines the same `name`, Claude Code uses the definition closest to the working directory.
 
 When you add a directory with `--add-dir` or `/add-dir`, Claude Code also loads its `.claude/agents/` folder, alongside your project subagents. See [Additional directories](/docs/en/permissions#additional-directories-grant-file-access-not-configuration) for which other configuration types load from `--add-dir`. To share subagents across projects without `--add-dir`, use `~/.claude/agents/` or a [plugin](/docs/en/plugins/overview).
 
@@ -547,7 +547,7 @@ Claude Code loads two kinds of server without checking trust for the folder the 
 * A name that references a server you already configured
 * An inline server in an agent file from `~/.claude/agents/`, in one you pass with `--agents` or the SDK `agents` option, or in one that managed settings supplies
 
-As of v2.1.153, the MCP restrictions that apply to the main session also cover servers declared in subagent frontmatter:
+The MCP restrictions that apply to the main session also cover servers declared in subagent frontmatter:
 
 * [`--strict-mcp-config`](/docs/en/cli-reference) and [`--bare`](/docs/en/cli-reference)
 * [Enterprise managed MCP configuration](/docs/en/managed-mcp)
@@ -884,7 +884,7 @@ The CLI flag overrides the setting if both are present.
 Subagents can run in the foreground or the background:
 
 * **Foreground subagents** block the main conversation until complete. Permission prompts are passed through to you as they come up.
-* **Background subagents** run concurrently while you continue working. When a background subagent reaches a tool call that needs permission, Claude Code surfaces the prompt in your main session and names the subagent that is asking. Approve to let the subagent continue, or press Esc to deny that one tool call without stopping the subagent. Before v2.1.186, background subagents auto-denied any tool call that would have prompted.
+* **Background subagents** run concurrently while you continue working. When a background subagent reaches a tool call that needs permission, Claude Code surfaces the prompt in your main session and names the subagent that is asking. Approve to let the subagent continue, or press Esc to deny that one tool call without stopping the subagent.
 
 For each subagent Claude spawns with the Agent tool, Claude Code picks foreground or background from the first of these cases that applies:
 
@@ -1101,7 +1101,7 @@ A subagent that has the `SendMessage` tool can send that message too. In an inte
 
 A subagent you stopped yourself, with `x` in `/tasks` or an SDK `stop_task` request, doesn't auto-resume. If Claude sends it a message, the message is refused and Claude is told the agent was cancelled.
 
-While [that subagent's row is still in the subagent panel](#run-subagents-in-foreground-or-background), type into its transcript to resume it yourself. After that, a message from Claude can auto-resume it again. Requires Claude Code v2.1.191 or later.
+While [that subagent's row is still in the subagent panel](#run-subagents-in-foreground-or-background), type into its transcript to resume it yourself. After that, a message from Claude can auto-resume it again.
 
 Resuming starts a new run of the agent under the same ID, so a subagent that had already failed or completed shows as running again in the task list and in the Agent SDK's task events. Before v2.1.205, it kept showing its earlier failed or completed status while the resumed run was working.
 

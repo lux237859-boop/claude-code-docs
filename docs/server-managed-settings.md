@@ -223,7 +223,7 @@ To enable this, add the key to your managed settings configuration:
 }
 ```
 
-You can also set this key in an [endpoint-managed](/docs/en/managed-settings#delivery-mechanisms) MDM profile or system `managed-settings.json` file to enforce fail-closed behavior on first launch, before any server payload has arrived. In Claude Code v2.1.191 or later, this flag is an exception to the [precedence rule](#settings-precedence) above: Claude Code honors it when any admin-controlled managed source sets it, even if a cached server-managed payload is also present, so it doesn't ignore an MDM-delivered value when server-managed settings exist.
+You can also set this key in an [endpoint-managed](/docs/en/managed-settings#delivery-mechanisms) MDM profile or system `managed-settings.json` file to enforce fail-closed behavior on first launch, before any server payload has arrived. This flag is an exception to the [precedence rule](#settings-precedence) above: Claude Code honors it when any admin-controlled managed source sets it, even if a cached server-managed payload is also present, so it doesn't ignore an MDM-delivered value when server-managed settings exist.
 
 When a [`policyHelper`](/docs/en/settings-reference#policyhelper) supplies managed settings, its output replaces every other managed source for the keys Claude Code reads after startup. For the sources Claude Code reads this key from, see [its settings entry](/docs/en/settings-reference#forceremotesettingsrefresh). The `policyHelper` entry says which sources Claude Code reads the helper from and when it runs.
 
