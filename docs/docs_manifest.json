@@ -430,8 +430,8 @@
     "cross-session-messaging.md": {
       "original_url": "https://code.claude.com/docs/en/cross-session-messaging",
       "original_md_url": "https://code.claude.com/docs/en/cross-session-messaging.md",
-      "hash": "61beb9bc9013e9939a745a599f18d1eaa72b407afd51dc5f120a65c03abbc5f5",
-      "last_updated": "2026-09-15T23:23:39.468222"
+      "hash": "a8ccea79027e86d6406e96239afffff80fd999b1c118b13300eba7019c9e9957",
+      "last_updated": "2026-09-26T20:36:55.683753"
     },
     "data-usage.md": {
       "original_url": "https://code.claude.com/docs/en/data-usage",
@@ -1257,8 +1257,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2026-09-26T15:43:33.900016",
-    "fetch_duration_seconds": 145.67727,
+    "last_fetch_completed": "2026-09-26T20:38:15.330679",
+    "fetch_duration_seconds": 122.25806,
     "total_pages_discovered": 209,
     "pages_fetched_successfully": 210,
     "pages_failed": 0,
@@ -1268,7 +1268,7 @@
     "total_files": 209,
     "fetch_tool_version": "3.0"
   },
-  "last_updated": "2026-09-26T15:43:33.900050",
+  "last_updated": "2026-09-26T20:38:15.330709",
   "base_url": "https://raw.githubusercontent.com/lux237859-boop/claude-code-docs/main/docs/",
   "github_repository": "lux237859-boop/claude-code-docs",
   "github_ref": "main",
